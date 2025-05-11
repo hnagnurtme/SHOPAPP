@@ -1,6 +1,6 @@
 package com.example;
 
-import com.example.shopapp.ui.ConsoleUI;
+import com.example.shopapp.ui.HomePage;
 
 public class App {
     public static void main(String[] args) {
@@ -10,9 +10,8 @@ public class App {
             // Initialize default data if needed
             initializeData();
             
-            // Start the console UI
-            ConsoleUI ui = new ConsoleUI();
-            ui.start();
+            HomePage homePage = new HomePage();
+            homePage.setVisible(true);
         } catch (Exception e) {
             System.err.println("Error starting application: " + e.getMessage());
             e.printStackTrace();

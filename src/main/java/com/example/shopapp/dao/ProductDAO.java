@@ -294,4 +294,50 @@ public class ProductDAO {
         
         return success;
     }
+    
+    /**
+     * Search products by name
+     * @param name The name to search for
+     * @return List of matching products
+     */
+    public List<Product> searchProductsByName(String name) {
+        List<Product> products = new ArrayList<>();
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        
+        try {
+            conn = DatabaseConnection.getConnection();
+            pstmt = conn.prepareStatement(
+                    "SELECT product_id, product_name, description, price, size, color, quantity, created_at " +
+                    "FROM Product WHERE product_name LIKE ?");
+            pstmt.setString(1, "%" + name + "%");
+            rs = pstmt.executeQuery();
+            
+            while (rs.next()) {
+                Product product = new Product();
+                product.setProductId(rs.getInt("product_id"));
+                product.setProductName(rs.getString("product_name"));
+                product.setDescription(rs.getString("description"));
+                product.setPrice(rs.getBigDecimal("price"));
+                product.setSize(rs.getString("size"));
+                product.setColor(rs.getString("color"));
+                product.setQuantity(rs.getInt("quantity"));
+                product.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
+                products.add(product);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error searching products by name: " + e.getMessage());
+        } finally {
+            if (rs != null) {
+                try { rs.close(); } catch (SQLException e) { /* ignore */ }
+            }
+            if (pstmt != null) {
+                try { pstmt.close(); } catch (SQLException e) { /* ignore */ }
+            }
+            DatabaseConnection.closeConnection(conn);
+        }
+        
+        return products;
+    }
 }

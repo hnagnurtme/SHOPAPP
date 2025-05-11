@@ -135,4 +135,31 @@ public class ProductService {
     public boolean deleteProduct(int productId) {
         return productDAO.delete(productId);
     }
+    
+    /**
+     * Add a new product from Product object
+     * @param product The product to add
+     * @return true if successful, false otherwise
+     */
+    public boolean addProduct(Product product) {
+        return productDAO.save(product);
+    }
+    
+    /**
+     * Update an existing product from Product object
+     * @param product The product to update
+     * @return true if successful, false otherwise
+     */
+    public boolean updateProduct(Product product) {
+        return productDAO.update(product);
+    }
+    
+    /**
+     * Search products by name
+     * @param name The name to search for
+     * @return List of matching products
+     */
+    public List<Product> searchProductsByName(String name) {
+        return productDAO.searchProductsByName(name);
+    }
 }
