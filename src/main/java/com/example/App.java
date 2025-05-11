@@ -1,6 +1,7 @@
 package com.example;
 
-import com.example.shopapp.ui.HomePage;
+import com.example.shopapp.ui.LoginForm;
+import javax.swing.SwingUtilities;
 
 public class App {
     public static void main(String[] args) {
@@ -10,8 +11,11 @@ public class App {
             // Initialize default data if needed
             initializeData();
             
-            HomePage homePage = new HomePage();
-            homePage.setVisible(true);
+            // Launch the application with the login form
+            SwingUtilities.invokeLater(() -> {
+                LoginForm loginForm = new LoginForm();
+                loginForm.setVisible(true);
+            });
         } catch (Exception e) {
             System.err.println("Error starting application: " + e.getMessage());
             e.printStackTrace();

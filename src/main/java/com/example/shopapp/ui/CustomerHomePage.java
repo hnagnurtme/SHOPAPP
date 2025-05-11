@@ -1,9 +1,10 @@
 package com.example.shopapp.ui;
 
+import com.example.shopapp.entity.Booking;
+import com.example.shopapp.entity.BookingDetail;
 import com.example.shopapp.entity.Product;
 import com.example.shopapp.entity.User;
 import com.example.shopapp.service.ProductService;
-import com.example.shopapp.service.UserService;
 import com.example.shopapp.service.BookingService;
 
 import javax.swing.*;
@@ -16,14 +17,14 @@ import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
- * HomePage class implements the main user interface using JFrame
+ * CustomerHomePage class implements the main user interface for regular users
  */
-public class HomePage extends JFrame {
+public class CustomerHomePage extends JFrame {
     private ProductService productService;
-    private UserService userService;
     private BookingService bookingService;
     
     // Current logged in user
@@ -32,14 +33,11 @@ public class HomePage extends JFrame {
     // UI Components
     private JTable productTable;
     private DefaultTableModel tableModel;
-    private JButton addButton;
-    private JButton editButton;
-    private JButton deleteButton;
+    private JButton viewOrdersButton;
     private JButton refreshButton;
-    private JButton customersButton;
-    private JButton bookingsButton;
     private JTextField searchField;
     private JButton searchButton;
+    private JButton addToCartButton;
     private JLabel statusLabel;
     private JPanel statusPanel;
     private JLabel userInfoLabel;
@@ -55,24 +53,11 @@ public class HomePage extends JFrame {
     private final Color TABLE_ALTERNATE_ROW = new Color(240, 248, 255);
     
     /**
-     * Constructor cho HomePage with user
+     * Constructor for CustomerHomePage with user
      */
-    public HomePage(User user) {
+    public CustomerHomePage(User user) {
         this.currentUser = user;
         productService = new ProductService();
-        userService = new UserService();
-        bookingService = new BookingService();
-        setupLookAndFeel();
-        initializeUI();
-        loadProductData();
-    }
-    
-    /**
-     * Constructor cho HomePage - for backward compatibility
-     */
-    public HomePage() {
-        productService = new ProductService();
-        userService = new UserService();
         bookingService = new BookingService();
         setupLookAndFeel();
         initializeUI();
@@ -111,7 +96,7 @@ public class HomePage extends JFrame {
      */
     private void initializeUI() {
         // Thiết lập thuộc tính cho frame
-        setTitle("Shop Management System");
+        setTitle("Shop Management - Customer Portal");
         setSize(1000, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -148,156 +133,112 @@ public class HomePage extends JFrame {
         centerPanel.add(scrollPane, BorderLayout.CENTER);
         mainPanel.add(centerPanel, BorderLayout.CENTER);
         mainPanel.add(buttonPanel, BorderLayout.SOUTH);
+        mainPanel.add(statusPanel, BorderLayout.SOUTH);
         
-        // Thêm panel chính và status bar vào frame
-        add(mainPanel, BorderLayout.CENTER);
-        add(statusPanel, BorderLayout.SOUTH);
-        
-        // Set up action listeners
+        // Thiết lập listener cho các nút
         setupActionListeners();
+        
+        // Thiết lập panel chính cho frame
+        setContentPane(mainPanel);
     }
     
     /**
-     * Tạo header panel với tiêu đề ứng dụng
+     * Tạo header panel với logo và thông tin người dùng
      */
     private JPanel createHeaderPanel() {
         JPanel headerPanel = new JPanel(new BorderLayout());
-        headerPanel.setBackground(PRIMARY_COLOR);
-        headerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        headerPanel.setBackground(BACKGROUND_COLOR);
+        headerPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
         
-        // Left side - Title and subtitle
-        JLabel titleLabel = new JLabel("Shop Management System");
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
-        titleLabel.setForeground(Color.WHITE);
-        titleLabel.setHorizontalAlignment(SwingConstants.LEFT);
+        // Panel bên trái chứa logo và tiêu đề
+        JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        leftPanel.setBackground(BACKGROUND_COLOR);
         
-        JLabel subtitleLabel = new JLabel("Products Management");
-        subtitleLabel.setFont(new Font("Arial", Font.PLAIN, 14));
-        subtitleLabel.setForeground(new Color(220, 220, 220));
+        JLabel logoLabel = new JLabel(createIcon("/icons/shop.png", 32, 32));
+        JLabel titleLabel = new JLabel("Customer Shop Portal");
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
+        titleLabel.setForeground(PRIMARY_COLOR);
         
-        JPanel labelPanel = new JPanel(new GridLayout(2, 1));
-        labelPanel.setBackground(PRIMARY_COLOR);
-        labelPanel.add(titleLabel);
-        labelPanel.add(subtitleLabel);
+        leftPanel.add(logoLabel);
+        leftPanel.add(titleLabel);
         
-        headerPanel.add(labelPanel, BorderLayout.WEST);
+        // Panel bên phải chứa thông tin người dùng và nút đăng xuất
+        JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        rightPanel.setBackground(BACKGROUND_COLOR);
         
-        // Right side - User info and logout button
-        JPanel userPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        userPanel.setBackground(PRIMARY_COLOR);
+        String userInfo = "Welcome, " + 
+                         (currentUser != null ? currentUser.getFullName() : "Guest");
+        userInfoLabel = new JLabel(userInfo);
+        userInfoLabel.setFont(new Font("Arial", Font.PLAIN, 14));
         
-        String username = "Guest";
-        boolean isAdmin = false;
+        logoutButton = createStyledButton("Logout", ACCENT_COLOR);
         
-        if (currentUser != null) {
-            username = currentUser.getUsername();
-            isAdmin = currentUser.getRole() != null && 
-                     currentUser.getRole().getRoleName().equalsIgnoreCase("admin");
-        }
+        rightPanel.add(userInfoLabel);
+        rightPanel.add(Box.createHorizontalStrut(15));
+        rightPanel.add(logoutButton);
         
-        // User info
-        userInfoLabel = new JLabel(isAdmin ? "Admin: " + username : "User: " + username);
-        userInfoLabel.setFont(new Font("Arial", Font.BOLD, 14));
-        userInfoLabel.setForeground(Color.WHITE);
-        userInfoLabel.setIcon(createIcon("/icons/user.png", 16, 16));
-        
-        // Logout button
-        logoutButton = new JButton("Logout");
-        logoutButton.setFont(new Font("Arial", Font.BOLD, 12));
-        logoutButton.setForeground(PRIMARY_COLOR);
-        logoutButton.setBackground(Color.WHITE);
-        logoutButton.setFocusPainted(false);
-        logoutButton.setBorder(new CompoundBorder(
-            new LineBorder(Color.WHITE, 1),
-            new EmptyBorder(5, 10, 5, 10)
-        ));
-        logoutButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        logoutButton.addActionListener(e -> logout());
-        
-        userPanel.add(userInfoLabel);
-        userPanel.add(Box.createHorizontalStrut(15));
-        userPanel.add(logoutButton);
-        
-        headerPanel.add(userPanel, BorderLayout.EAST);
+        headerPanel.add(leftPanel, BorderLayout.WEST);
+        headerPanel.add(rightPanel, BorderLayout.EAST);
         
         return headerPanel;
     }
     
     /**
-     * Tạo panel tìm kiếm và điều hướng
+     * Create top panel with search field and navigation buttons
      */
     private JPanel createTopPanel() {
-        JPanel topPanel = new JPanel(new BorderLayout(10, 10));
+        JPanel topPanel = new JPanel(new BorderLayout(10, 0));
         topPanel.setBackground(BACKGROUND_COLOR);
-        topPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
+        topPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
         
-        // Tạo panel tìm kiếm
-        JPanel searchPanel = new JPanel(new BorderLayout(5, 0));
+        // Search panel
+        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         searchPanel.setBackground(BACKGROUND_COLOR);
         
-        JLabel searchLabel = new JLabel("Search:");
+        JLabel searchLabel = new JLabel("Search Products: ");
         searchLabel.setFont(new Font("Arial", Font.BOLD, 14));
         
         searchField = new JTextField(20);
         searchField.setFont(new Font("Arial", Font.PLAIN, 14));
         searchField.setBorder(new CompoundBorder(
             new LineBorder(SECONDARY_COLOR, 1),
-            new EmptyBorder(5, 5, 5, 5)
+            new EmptyBorder(5, 8, 5, 8)
         ));
         
-        searchButton = createStyledButton("Search", ACCENT_COLOR);
-        searchButton.setIcon(createIcon("/icons/search.png", 16, 16));
+        searchButton = createStyledButton("Search", SECONDARY_COLOR);
         
-        JPanel searchInputPanel = new JPanel(new BorderLayout(5, 0));
-        searchInputPanel.setBackground(BACKGROUND_COLOR);
-        searchInputPanel.add(searchLabel, BorderLayout.WEST);
-        searchInputPanel.add(searchField, BorderLayout.CENTER);
-        searchInputPanel.add(searchButton, BorderLayout.EAST);
+        searchPanel.add(searchLabel);
+        searchPanel.add(searchField);
+        searchPanel.add(searchButton);
         
-        searchPanel.add(searchInputPanel, BorderLayout.CENTER);
-        
-        // Tạo panel điều hướng ở phía trên bên phải
+        // Add button to view orders
         JPanel navPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         navPanel.setBackground(BACKGROUND_COLOR);
         
-        customersButton = createStyledButton("Customers", PRIMARY_COLOR);
-        customersButton.setIcon(createIcon("/icons/customers.png", 16, 16));
+        viewOrdersButton = createStyledButton("My Orders", PRIMARY_COLOR);
         
-        bookingsButton = createStyledButton("Orders", PRIMARY_COLOR);
-        bookingsButton.setIcon(createIcon("/icons/bookings.png", 16, 16));
+        navPanel.add(viewOrdersButton);
         
-        navPanel.add(customersButton);
-        navPanel.add(bookingsButton);
-        
-        // Kết hợp panel tìm kiếm và điều hướng
-        topPanel.add(searchPanel, BorderLayout.CENTER);
+        topPanel.add(searchPanel, BorderLayout.WEST);
         topPanel.add(navPanel, BorderLayout.EAST);
         
         return topPanel;
     }
     
     /**
-     * Tạo bảng hiển thị sản phẩm
+     * Create product table to display available products
      */
     private JScrollPane createProductTable() {
-        String[] columns = {"ID", "Product Name", "Description", "Price", "Size", "Color", "Quantity"};
+        // Table model with column names
+        String[] columns = {"ID", "Name", "Description", "Price", "Size", "Color", "Quantity"};
         tableModel = new DefaultTableModel(columns, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
-            
-            @Override
-            public Class<?> getColumnClass(int columnIndex) {
-                if (columnIndex == 0 || columnIndex == 6) { // ID and Quantity columns
-                    return Integer.class;
-                }
-                return String.class;
-            }
         };
         
         productTable = new JTable(tableModel);
-        productTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         productTable.setFont(new Font("Arial", Font.PLAIN, 14));
         productTable.setRowHeight(30);
         productTable.setShowGrid(true);
@@ -350,58 +291,40 @@ public class HomePage extends JFrame {
     }
     
     /**
-     * Tạo panel chứa các nút thao tác
+     * Create panel with action buttons
      */
     private JPanel createButtonPanel() {
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 0));
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
         buttonPanel.setBackground(BACKGROUND_COLOR);
-        buttonPanel.setBorder(BorderFactory.createEmptyBorder(15, 0, 0, 0));
+        buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
         
-        addButton = createStyledButton("Add Product", SECONDARY_COLOR);
-        addButton.setIcon(createIcon("/icons/add.png", 16, 16));
-        
-        editButton = createStyledButton("Edit Product", SECONDARY_COLOR);
-        editButton.setIcon(createIcon("/icons/edit.png", 16, 16));
-        
-        deleteButton = createStyledButton("Delete Product", SECONDARY_COLOR);
-        deleteButton.setIcon(createIcon("/icons/delete.png", 16, 16));
-        
+        addToCartButton = createStyledButton("Buy Now", ACCENT_COLOR);
         refreshButton = createStyledButton("Refresh", SECONDARY_COLOR);
-        refreshButton.setIcon(createIcon("/icons/refresh.png", 16, 16));
         
-        buttonPanel.add(addButton);
-        buttonPanel.add(editButton);
-        buttonPanel.add(deleteButton);
+        buttonPanel.add(addToCartButton);
         buttonPanel.add(refreshButton);
         
         return buttonPanel;
     }
     
     /**
-     * Tạo status bar ở dưới cùng của ứng dụng
+     * Create status panel for displaying messages
      */
     private JPanel createStatusPanel() {
-        JPanel statusPanel = new JPanel(new BorderLayout());
-        statusPanel.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
-        statusPanel.setBackground(PRIMARY_COLOR);
+        JPanel statusPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        statusPanel.setBackground(BACKGROUND_COLOR);
+        statusPanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 0, 0));
         
         statusLabel = new JLabel("Ready");
-        statusLabel.setForeground(Color.WHITE);
         statusLabel.setFont(new Font("Arial", Font.PLAIN, 12));
-        
-        JLabel versionLabel = new JLabel("v1.0.0");
-        versionLabel.setForeground(Color.WHITE);
-        versionLabel.setFont(new Font("Arial", Font.PLAIN, 12));
-        versionLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-        
-        statusPanel.add(statusLabel, BorderLayout.WEST);
-        statusPanel.add(versionLabel, BorderLayout.EAST);
+        statusPanel.add(statusLabel);
         
         return statusPanel;
     }
     
     /**
-     * Tạo nút với style nhất quán
+     * Create styled button with consistent appearance
      */
     private JButton createStyledButton(String text, Color bgColor) {
         JButton button = new JButton(text);
@@ -414,7 +337,7 @@ public class HomePage extends JFrame {
             new EmptyBorder(8, 12, 8, 12)
         ));
         
-        // Hiệu ứng hover
+        // Hover effect
         button.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 button.setBackground(bgColor.brighter());
@@ -429,8 +352,8 @@ public class HomePage extends JFrame {
     }
     
     /**
-     * Tạo icon từ path
-     * Trả về placeholder icon nếu không tìm thấy
+     * Create icon from resource path
+     * Returns placeholder icon if not found
      */
     private ImageIcon createIcon(String path, int width, int height) {
         try {
@@ -440,54 +363,30 @@ public class HomePage extends JFrame {
                 return new ImageIcon(img);
             }
         } catch (Exception e) {
+            // Icon not found
         }
         return new ImageIcon();
     }
     
     /**
-     * Thiết lập các action listener cho các component
+     * Setup action listeners for all components
      */
     private void setupActionListeners() {
-        // Add product button
-        addButton.addActionListener(e -> {
-            updateStatus("Opening add product form...");
-            ProductAddForm addForm = new ProductAddForm(this, productService);
-            addForm.setVisible(true);
-            loadProductData();
-            updateStatus("Product data refreshed");
+        // Logout button
+        logoutButton.addActionListener(e -> {
+            updateStatus("Logging out...");
+            LoginForm loginForm = new LoginForm();
+            loginForm.setVisible(true);
+            dispose();
         });
         
-        // Edit product button
-        editButton.addActionListener(e -> {
-            int selectedRow = productTable.getSelectedRow();
-            if (selectedRow == -1) {
-                JOptionPane.showMessageDialog(this, 
-                    "Please select a product to edit", 
-                    "Information", 
-                    JOptionPane.INFORMATION_MESSAGE);
-                return;
-            }
-            
-            updateStatus("Opening edit form for selected product...");
-            int productId = (int) tableModel.getValueAt(selectedRow, 0);
-            Product product = productService.getProductById(productId);
-            
-            if (product == null) {
-                JOptionPane.showMessageDialog(this, 
-                    "Product not found", 
-                    "Error", 
-                    JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            
-            ProductEditForm editForm = new ProductEditForm(this, productService, product);
-            editForm.setVisible(true);
-            loadProductData();
-            updateStatus("Product data refreshed");
+        // View orders button
+        viewOrdersButton.addActionListener(e -> {
+            updateStatus("Opening your orders...");
+            BookingListForm bookingListForm = new BookingListForm(this, bookingService);
+            bookingListForm.setVisible(true);
+            updateStatus("Ready");
         });
-        
-        // Delete product button
-        deleteButton.addActionListener(e -> deleteProduct());
         
         // Refresh button
         refreshButton.addActionListener(e -> {
@@ -499,7 +398,7 @@ public class HomePage extends JFrame {
         // Search button
         searchButton.addActionListener(e -> searchProducts());
         
-        // Search on Enter key
+        // Search field enter key
         searchField.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
@@ -509,40 +408,102 @@ public class HomePage extends JFrame {
             }
         });
         
-        // Customers button
-        customersButton.addActionListener(e -> {
-            updateStatus("Opening customer list...");
-            CustomerListForm customerListForm = new CustomerListForm(this, userService);
-            customerListForm.setVisible(true);
-            updateStatus("Ready");
-        });
-        
-        // Orders button
-        bookingsButton.addActionListener(e -> {
-            updateStatus("Opening orders list...");
-            BookingListForm bookingListForm = new BookingListForm(this, bookingService);
-            bookingListForm.setVisible(true);
-            updateStatus("Ready");
+        // Buy Now button
+        addToCartButton.addActionListener(e -> {
+            int selectedRow = productTable.getSelectedRow();
+            if (selectedRow == -1) {
+                JOptionPane.showMessageDialog(this, 
+                    "Please select a product to purchase", 
+                    "Information", 
+                    JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+            
+            int productId = (int) tableModel.getValueAt(selectedRow, 0);
+            String productName = (String) tableModel.getValueAt(selectedRow, 1);
+            double price = Double.parseDouble(tableModel.getValueAt(selectedRow, 3).toString());
+            
+            // Ask for quantity
+            String quantityStr = JOptionPane.showInputDialog(this, 
+                "Enter quantity for " + productName + ":", 
+                "Purchase Quantity", 
+                JOptionPane.QUESTION_MESSAGE);
+                
+            if (quantityStr == null || quantityStr.trim().isEmpty()) {
+                return; // User cancelled
+            }
+            
+            try {
+                int quantity = Integer.parseInt(quantityStr.trim());
+                if (quantity <= 0) {
+                    JOptionPane.showMessageDialog(this,
+                        "Please enter a valid quantity (greater than 0)",
+                        "Invalid Quantity",
+                        JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                
+                // Check available stock
+                int availableStock = (int) tableModel.getValueAt(selectedRow, 6);
+                if (quantity > availableStock) {
+                    JOptionPane.showMessageDialog(this,
+                        "Not enough stock available. Maximum available: " + availableStock,
+                        "Insufficient Stock",
+                        JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+                
+                // Confirm purchase
+                int confirm = JOptionPane.showConfirmDialog(this,
+                    "Confirm purchase of " + quantity + " x " + productName + "\n" +
+                    "Total price: $" + (price * quantity),
+                    "Confirm Purchase",
+                    JOptionPane.YES_NO_OPTION);
+                    
+                if (confirm == JOptionPane.YES_OPTION) {
+                    // Create direct booking
+                    boolean success = createDirectBooking(productId, quantity);
+                    
+                    if (success) {
+                        updateStatus("Purchased " + quantity + " x " + productName);
+                        JOptionPane.showMessageDialog(this,
+                            "Your purchase was successful!\n" +
+                            "Product: " + productName + "\n" +
+                            "Quantity: " + quantity + "\n" +
+                            "Total: $" + (price * quantity),
+                            "Purchase Successful",
+                            JOptionPane.INFORMATION_MESSAGE);
+                            
+                        // Refresh product data to update stock
+                        loadProductData();
+                    }
+                }
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(this,
+                    "Please enter a valid number for quantity",
+                    "Invalid Input",
+                    JOptionPane.ERROR_MESSAGE);
+            }
         });
     }
     
     /**
-     * Tải dữ liệu sản phẩm vào bảng
+     * Load product data from database
      */
     private void loadProductData() {
-        // Xóa dữ liệu hiện có
+        // Clear existing data
         tableModel.setRowCount(0);
         
-        // Lấy tất cả sản phẩm
+        // Get products from service
         List<Product> products = productService.getAllProducts();
         
-        // Thêm sản phẩm vào bảng
+        // Add products to table
         for (Product product : products) {
             Object[] row = {
                 product.getProductId(),
                 product.getProductName(),
                 product.getDescription(),
-                product.getPrice().toString(),
+                product.getPrice(),
                 product.getSize(),
                 product.getColor(),
                 product.getQuantity()
@@ -554,49 +515,10 @@ public class HomePage extends JFrame {
     }
     
     /**
-     * Xóa sản phẩm đã chọn
-     */
-    private void deleteProduct() {
-        int selectedRow = productTable.getSelectedRow();
-        if (selectedRow == -1) {
-            JOptionPane.showMessageDialog(this, 
-                "Please select a product to delete", 
-                "Information", 
-                JOptionPane.INFORMATION_MESSAGE);
-            return;
-        }
-        
-        int productId = (int) tableModel.getValueAt(selectedRow, 0);
-        String productName = (String) tableModel.getValueAt(selectedRow, 1);
-        
-        int result = JOptionPane.showConfirmDialog(this, 
-            "Are you sure you want to delete product: " + productName + "?", 
-            "Confirm Deletion", 
-            JOptionPane.YES_NO_OPTION, 
-            JOptionPane.WARNING_MESSAGE);
-            
-        if (result == JOptionPane.YES_OPTION) {
-            try {
-                updateStatus("Deleting product...");
-                productService.deleteProduct(productId);
-                loadProductData();
-                updateStatus("Product deleted successfully");
-            } catch (Exception ex) {
-                JOptionPane.showMessageDialog(this, 
-                    "Error deleting product: " + ex.getMessage(), 
-                    "Error", 
-                    JOptionPane.ERROR_MESSAGE);
-                updateStatus("Error deleting product");
-            }
-        }
-    }
-    
-    /**
-     * Tìm kiếm sản phẩm theo tên
+     * Search for products by name
      */
     private void searchProducts() {
         String searchTerm = searchField.getText().trim();
-        
         if (searchTerm.isEmpty()) {
             loadProductData();
             return;
@@ -604,19 +526,19 @@ public class HomePage extends JFrame {
         
         updateStatus("Searching for products containing '" + searchTerm + "'...");
         
-        // Xóa dữ liệu hiện có
+        // Clear existing data
         tableModel.setRowCount(0);
         
-        // Tìm kiếm sản phẩm
-        List<Product> products = productService.searchProductsByName(searchTerm);
+        // Get filtered products
+        List<Product> products = productService.searchProducts(searchTerm);
         
-        // Thêm sản phẩm vào bảng
+        // Add products to table
         for (Product product : products) {
             Object[] row = {
                 product.getProductId(),
                 product.getProductName(),
                 product.getDescription(),
-                product.getPrice().toString(),
+                product.getPrice(),
                 product.getSize(),
                 product.getColor(),
                 product.getQuantity()
@@ -624,46 +546,40 @@ public class HomePage extends JFrame {
             tableModel.addRow(row);
         }
         
-        updateStatus("Found " + products.size() + " matching products");
+        updateStatus("Found " + products.size() + " products matching '" + searchTerm + "'");
     }
     
     /**
-     * Cập nhật trạng thái hiển thị ở status bar
+     * Update status message
      */
     private void updateStatus(String message) {
         statusLabel.setText(message);
     }
-    
+
     /**
-     * Logout the current user and return to login screen
+     * Create a direct booking for the selected product
+     * @param productId The ID of the product to purchase
+     * @param quantity The quantity to purchase
+     * @return True if the booking was created successfully
      */
-    private void logout() {
-        int choice = JOptionPane.showConfirmDialog(this, 
-            "Are you sure you want to log out?", 
-            "Confirm Logout", 
-            JOptionPane.YES_NO_OPTION);
+    private boolean createDirectBooking(int productId, int quantity) {
+        try {
+            // Create a booking item for the product
+            BookingService.BookingItem item = new BookingService.BookingItem(productId, quantity);
+            List<BookingService.BookingItem> items = new ArrayList<>();
+            items.add(item);
             
-        if (choice == JOptionPane.YES_OPTION) {
-            updateStatus("Logging out...");
-            this.dispose();
+            // Create the booking
+            Booking booking = bookingService.createBooking(currentUser.getUserId(), items);
             
-            // Show the login form
-            SwingUtilities.invokeLater(() -> {
-                LoginForm loginForm = new LoginForm();
-                loginForm.setVisible(true);
-            });
+            return booking != null;
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this,
+                "Error creating booking: " + e.getMessage(),
+                "Error",
+                JOptionPane.ERROR_MESSAGE);
+            return false;
         }
-    }
-    
-    /**
-     * Phương thức chính để khởi động ứng dụng
-     */
-    public static void main(String[] args) {
-        // Khởi chạy ứng dụng với SwingUtilities
-        SwingUtilities.invokeLater(() -> {
-            // Show the login form instead of directly showing HomePage
-            LoginForm loginForm = new LoginForm();
-            loginForm.setVisible(true);
-        });
     }
 }

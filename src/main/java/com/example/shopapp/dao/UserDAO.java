@@ -281,4 +281,50 @@ public class UserDAO {
         
         return success;
     }
+
+    /**
+     * Get user by email
+     * @param email Email to search for
+     * @return User object, or null if not found
+     */
+    public User getByEmail(String email) {
+        User user = null;
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        
+        try {
+            conn = DatabaseConnection.getConnection();
+            pstmt = conn.prepareStatement("SELECT user_id, username, password, email, full_name, role_id, created_at FROM [User] WHERE email = ?");
+            pstmt.setString(1, email);
+            rs = pstmt.executeQuery();
+            
+            if (rs.next()) {
+                user = new User();
+                user.setUserId(rs.getInt("user_id"));
+                user.setUsername(rs.getString("username"));
+                user.setPassword(rs.getString("password"));
+                user.setEmail(rs.getString("email"));
+                user.setFullName(rs.getString("full_name"));
+                user.setRoleId(rs.getInt("role_id"));
+                user.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
+                
+                // Set role if role_id is not null
+                if (rs.getObject("role_id") != null) {
+                    user.setRole(roleDAO.getById(rs.getInt("role_id")));
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error getting user by email: " + e.getMessage());
+        } finally {
+            if (rs != null) {
+                try { rs.close(); } catch (SQLException e) { /* ignore */ }
+            }
+            if (pstmt != null) {
+                try { pstmt.close(); } catch (SQLException e) { /* ignore */ }
+            }
+            DatabaseConnection.closeConnection(conn);
+        }
+        return user;
+    }
 }

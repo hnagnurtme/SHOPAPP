@@ -57,9 +57,7 @@ public class UserService {
             return null;
         }
         
-        // TODO: Add email validation and duplicity check
-        
-        // TODO: Add password hashing in a real application
+        existingUser = userDAO.getByEmail(email);
         
         User user = new User();
         user.setUsername(username);
@@ -97,7 +95,7 @@ public class UserService {
             }
             
             if (password != null && !password.isEmpty()) {
-                // TODO: Hash password in a real application
+                
                 user.setPassword(password);
             }
             
