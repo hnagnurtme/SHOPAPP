@@ -98,4 +98,40 @@ public class UserService {
         List<User> users = getAllUsers();
         return users != null ? users.size() : 0;
     }
+    
+    
+    public boolean verifyPassword(String username, String password) {
+        User user = userDAO.getByUsername(username);
+        if (user == null) {
+            return false;
+        }
+        return user.getPassword().equals(password);
+    }
+    
+    
+    public boolean updateUser(int userId, String fullName, String email) {
+        User user = userDAO.getById(userId);
+        if (user == null) {
+            return false;
+        }
+        
+        user.setFullName(fullName);
+        user.setEmail(email);
+        
+        return userDAO.update(user);
+    }
+    
+    
+    public boolean updateUserWithPassword(int userId, String fullName, String email, String newPassword) {
+        User user = userDAO.getById(userId);
+        if (user == null) {
+            return false;
+        }
+        
+        user.setFullName(fullName);
+        user.setEmail(email);
+        user.setPassword(newPassword);
+        
+        return userDAO.update(user);
+    }
 }

@@ -4,6 +4,7 @@ import com.example.shopapp.entity.Booking;
 import com.example.shopapp.entity.Product;
 import com.example.shopapp.entity.User;
 import com.example.shopapp.service.ProductService;
+import com.example.shopapp.service.UserService;
 import com.example.shopapp.utils.UIUtils;
 import com.example.shopapp.service.BookingService;
 
@@ -143,6 +144,24 @@ public class CustomerHomePage extends JFrame {
         userInfoLabel = new JLabel(userInfo);
         userInfoLabel.setFont(new Font("Arial", Font.BOLD, 14));
         userInfoLabel.setForeground(Color.WHITE);
+        userInfoLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        userInfoLabel.setToolTipText("Click to edit account information");
+        
+        // Add mouse listener to open account info form when clicked
+        userInfoLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                showUserProfileForm();
+            }
+            
+            // Add hover effect
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                userInfoLabel.setForeground(new Color(255, 255, 150));
+            }
+            
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                userInfoLabel.setForeground(Color.WHITE);
+            }
+        });
         
         logoutButton = new JButton("Logout");
         logoutButton.setFont(new Font("Arial", Font.BOLD, 12));
@@ -499,5 +518,39 @@ public class CustomerHomePage extends JFrame {
                 JOptionPane.ERROR_MESSAGE);
             return false;
         }
+    }
+
+    /**
+     * Shows user profile form for viewing and editing account information
+     */
+    private void showUserProfileForm() {
+        if (currentUser == null) {
+            JOptionPane.showMessageDialog(this, 
+                "No user information available", 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        // Create and display user profile form
+        UserProfileForm profileForm = new UserProfileForm(this, new UserService(), currentUser);
+        profileForm.setVisible(true);
+    }
+    
+    /**
+     * Update user information displayed in the UI
+     * 
+     * @param user The updated user object
+     */
+    public void updateUserInfo(User user) {
+        if (user == null) {
+            return;
+        }
+        
+        // Update current user
+        this.currentUser = user;
+        
+        // Update user info label
+        userInfoLabel.setText("Welcome, " + user.getFullName());
     }
 }

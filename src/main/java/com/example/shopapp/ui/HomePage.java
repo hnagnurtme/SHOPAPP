@@ -165,6 +165,24 @@ public class HomePage extends JFrame {
         userInfoLabel.setFont(new Font("Arial", Font.BOLD, 14));
         userInfoLabel.setForeground(Color.WHITE);
         userInfoLabel.setIcon(UIUtils.createIcon(getClass(), username, WIDTH, HEIGHT));
+        userInfoLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        userInfoLabel.setToolTipText("Click to edit account information");
+        
+        // Add mouse listener to open account info form when clicked
+        userInfoLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                showUserProfileForm();
+            }
+            
+            // Add hover effect
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                userInfoLabel.setForeground(new Color(255, 255, 150));
+            }
+            
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                userInfoLabel.setForeground(Color.WHITE);
+            }
+        });
         
         // Logout button
         logoutButton = new JButton("Logout");
@@ -602,5 +620,38 @@ public class HomePage extends JFrame {
         boxPanel.add(titleLabel, BorderLayout.SOUTH);
         
         return boxPanel;
+    }
+    
+    private void showUserProfileForm() {
+        if (currentUser == null) {
+            JOptionPane.showMessageDialog(this, 
+                "No user information available", 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        // Create and display user profile form
+        UserProfileForm profileForm = new UserProfileForm(this, userService, currentUser);
+        profileForm.setVisible(true);
+    }
+    
+    /**
+     * Update user information displayed in the UI
+     * 
+     * @param user The updated user object
+     */
+    public void updateUserInfo(User user) {
+        if (user == null) {
+            return;
+        }
+        
+        // Update current user
+        this.currentUser = user;
+        
+        // Update user info label
+        boolean isAdmin = user.getRole() != null && 
+                         user.getRole().getRoleName().equalsIgnoreCase("admin");
+        userInfoLabel.setText(isAdmin ? "Admin: " + user.getUsername() : "User: " + user.getUsername());
     }
 }

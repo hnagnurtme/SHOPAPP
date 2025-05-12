@@ -311,9 +311,5 @@ public class SignupForm extends JFrame {
         Pattern pattern = Pattern.compile(emailRegex);
         return pattern.matcher(email).matches();
     }
-    
-    
-    
-    
-   
+     
 }
