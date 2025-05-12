@@ -1,10 +1,10 @@
 package com.example.shopapp.ui;
 
 import com.example.shopapp.entity.Booking;
-import com.example.shopapp.entity.BookingDetail;
 import com.example.shopapp.entity.Product;
 import com.example.shopapp.entity.User;
 import com.example.shopapp.service.ProductService;
+import com.example.shopapp.utils.UIUtils;
 import com.example.shopapp.service.BookingService;
 
 import javax.swing.*;
@@ -20,14 +20,11 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * CustomerHomePage class implements the main user interface for regular users
- */
+
 public class CustomerHomePage extends JFrame {
     private ProductService productService;
     private BookingService bookingService;
     
-    // Current logged in user
     private User currentUser;
     
     // UI Components
@@ -46,61 +43,28 @@ public class CustomerHomePage extends JFrame {
     // Colors
     private final Color PRIMARY_COLOR = new Color(25, 118, 210);
     private final Color SECONDARY_COLOR = new Color(66, 165, 245);
-    private final Color ACCENT_COLOR = new Color(255, 111, 0);
     private final Color BACKGROUND_COLOR = new Color(245, 245, 245);
     private final Color TABLE_HEADER_BG = new Color(25, 118, 210);
     private final Color TABLE_HEADER_FG = Color.WHITE;
     private final Color TABLE_ALTERNATE_ROW = new Color(240, 248, 255);
     
-    /**
-     * Constructor for CustomerHomePage with user
-     */
+    
     public CustomerHomePage(User user) {
         this.currentUser = user;
         productService = new ProductService();
         bookingService = new BookingService();
-        setupLookAndFeel();
+        UIUtils.setupLookAndFeel();
         initializeUI();
         loadProductData();
     }
-    
-    /**
-     * Thiết lập look and feel cho ứng dụng
-     */
-    private void setupLookAndFeel() {
-        try {
-            for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (Exception e) {
-            try {
-                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        }
-        
-        // Set colors for Nimbus
-        UIManager.put("control", BACKGROUND_COLOR);
-        UIManager.put("nimbusBase", PRIMARY_COLOR);
-        UIManager.put("nimbusFocus", ACCENT_COLOR);
-        UIManager.put("nimbusLinkVisited", new Color(102, 14, 122));
-        UIManager.put("nimbusBlueGrey", new Color(169, 176, 190));
-    }
-    
-    /**
-     * Khởi tạo giao diện người dùng
-     */
+
     private void initializeUI() {
         // Thiết lập thuộc tính cho frame
         setTitle("Shop Management - Customer Portal");
-        setSize(1000, 700);
+        setSize(1200, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-        setIconImage(createIcon("/icons/shop.png", 16, 16).getImage());
+
         
         // Set background color
         getContentPane().setBackground(BACKGROUND_COLOR);
@@ -131,8 +95,13 @@ public class CustomerHomePage extends JFrame {
         centerPanel.setBackground(BACKGROUND_COLOR);
         centerPanel.add(topPanel, BorderLayout.NORTH);
         centerPanel.add(scrollPane, BorderLayout.CENTER);
+        
+        // Add button panel to the center panel
+        centerPanel.add(buttonPanel, BorderLayout.SOUTH);
+        
         mainPanel.add(centerPanel, BorderLayout.CENTER);
-        mainPanel.add(buttonPanel, BorderLayout.SOUTH);
+        
+        // Put status panel at the bottom
         mainPanel.add(statusPanel, BorderLayout.SOUTH);
         
         // Thiết lập listener cho các nút
@@ -142,50 +111,59 @@ public class CustomerHomePage extends JFrame {
         setContentPane(mainPanel);
     }
     
-    /**
-     * Tạo header panel với logo và thông tin người dùng
-     */
+   
     private JPanel createHeaderPanel() {
         JPanel headerPanel = new JPanel(new BorderLayout());
-        headerPanel.setBackground(BACKGROUND_COLOR);
-        headerPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
+        headerPanel.setBackground(PRIMARY_COLOR);
+        headerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         
-        // Panel bên trái chứa logo và tiêu đề
-        JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        leftPanel.setBackground(BACKGROUND_COLOR);
-        
-        JLabel logoLabel = new JLabel(createIcon("/icons/shop.png", 32, 32));
+        // Left side - Title and subtitle
         JLabel titleLabel = new JLabel("Customer Shop Portal");
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
-        titleLabel.setForeground(PRIMARY_COLOR);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        titleLabel.setForeground(Color.WHITE);
+        titleLabel.setHorizontalAlignment(SwingConstants.LEFT);
         
-        leftPanel.add(logoLabel);
-        leftPanel.add(titleLabel);
+        JLabel subtitleLabel = new JLabel("Browse and Purchase Products");
+        subtitleLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        subtitleLabel.setForeground(new Color(220, 220, 220));
         
-        // Panel bên phải chứa thông tin người dùng và nút đăng xuất
-        JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        rightPanel.setBackground(BACKGROUND_COLOR);
+        JPanel labelPanel = new JPanel(new GridLayout(2, 1));
+        labelPanel.setBackground(PRIMARY_COLOR);
+        labelPanel.add(titleLabel);
+        labelPanel.add(subtitleLabel);
+        
+        headerPanel.add(labelPanel, BorderLayout.WEST);
+        
+        // Right side - User info and logout button
+        JPanel userPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        userPanel.setBackground(PRIMARY_COLOR);
         
         String userInfo = "Welcome, " + 
                          (currentUser != null ? currentUser.getFullName() : "Guest");
         userInfoLabel = new JLabel(userInfo);
-        userInfoLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        userInfoLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        userInfoLabel.setForeground(Color.WHITE);
         
-        logoutButton = createStyledButton("Logout", ACCENT_COLOR);
+        logoutButton = new JButton("Logout");
+        logoutButton.setFont(new Font("Arial", Font.BOLD, 12));
+        logoutButton.setForeground(PRIMARY_COLOR);
+        logoutButton.setBackground(Color.WHITE);
+        logoutButton.setFocusPainted(false);
+        logoutButton.setBorder(new CompoundBorder(
+            new LineBorder(Color.WHITE, 1),
+            new EmptyBorder(5, 10, 5, 10)
+        ));
+        logoutButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
         
-        rightPanel.add(userInfoLabel);
-        rightPanel.add(Box.createHorizontalStrut(15));
-        rightPanel.add(logoutButton);
+        userPanel.add(userInfoLabel);
+        userPanel.add(Box.createHorizontalStrut(15));
+        userPanel.add(logoutButton);
         
-        headerPanel.add(leftPanel, BorderLayout.WEST);
-        headerPanel.add(rightPanel, BorderLayout.EAST);
+        headerPanel.add(userPanel, BorderLayout.EAST);
         
         return headerPanel;
     }
     
-    /**
-     * Create top panel with search field and navigation buttons
-     */
     private JPanel createTopPanel() {
         JPanel topPanel = new JPanel(new BorderLayout(10, 0));
         topPanel.setBackground(BACKGROUND_COLOR);
@@ -205,7 +183,7 @@ public class CustomerHomePage extends JFrame {
             new EmptyBorder(5, 8, 5, 8)
         ));
         
-        searchButton = createStyledButton("Search", SECONDARY_COLOR);
+        searchButton = UIUtils.createStyledButton("Search", PRIMARY_COLOR);
         
         searchPanel.add(searchLabel);
         searchPanel.add(searchField);
@@ -215,7 +193,7 @@ public class CustomerHomePage extends JFrame {
         JPanel navPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         navPanel.setBackground(BACKGROUND_COLOR);
         
-        viewOrdersButton = createStyledButton("My Orders", PRIMARY_COLOR);
+        viewOrdersButton = UIUtils.createStyledButton("View Orders", SECONDARY_COLOR);
         
         navPanel.add(viewOrdersButton);
         
@@ -225,9 +203,7 @@ public class CustomerHomePage extends JFrame {
         return topPanel;
     }
     
-    /**
-     * Create product table to display available products
-     */
+    
     private JScrollPane createProductTable() {
         // Table model with column names
         String[] columns = {"ID", "Name", "Description", "Price", "Size", "Color", "Quantity"};
@@ -244,7 +220,7 @@ public class CustomerHomePage extends JFrame {
         productTable.setShowGrid(true);
         productTable.setGridColor(new Color(230, 230, 230));
         
-        // Set table header style
+        
         JTableHeader header = productTable.getTableHeader();
         header.setFont(new Font("Arial", Font.BOLD, 14));
         header.setBackground(TABLE_HEADER_BG);
@@ -252,7 +228,7 @@ public class CustomerHomePage extends JFrame {
         header.setBorder(BorderFactory.createLineBorder(BACKGROUND_COLOR));
         ((DefaultTableCellRenderer)header.getDefaultRenderer()).setHorizontalAlignment(JLabel.CENTER);
         
-        // Set column widths
+        
         productTable.getColumnModel().getColumn(0).setMaxWidth(60);  // ID Column
         productTable.getColumnModel().getColumn(0).setPreferredWidth(60);
         productTable.getColumnModel().getColumn(1).setPreferredWidth(200); // Name
@@ -262,13 +238,13 @@ public class CustomerHomePage extends JFrame {
         productTable.getColumnModel().getColumn(5).setPreferredWidth(100); // Color
         productTable.getColumnModel().getColumn(6).setPreferredWidth(80);  // Quantity
         
-        // Center align ID and quantity columns
+        
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
         productTable.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
         productTable.getColumnModel().getColumn(6).setCellRenderer(centerRenderer);
         
-        // Create striped rows effect
+        
         productTable.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, 
@@ -290,27 +266,27 @@ public class CustomerHomePage extends JFrame {
         return scrollPane;
     }
     
-    /**
-     * Create panel with action buttons
-     */
+    
     private JPanel createButtonPanel() {
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
         buttonPanel.setBackground(BACKGROUND_COLOR);
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
         
-        addToCartButton = createStyledButton("Buy Now", ACCENT_COLOR);
-        refreshButton = createStyledButton("Refresh", SECONDARY_COLOR);
+        addToCartButton = UIUtils.createStyledButton("Buy Now", PRIMARY_COLOR);
+        addToCartButton.setFont(new Font("Arial", Font.BOLD, 14)); // Larger font
+        addToCartButton.setPreferredSize(new Dimension(150, 40)); // Make button larger
+        
+        refreshButton = UIUtils.createStyledButton("Refresh", SECONDARY_COLOR);
         
         buttonPanel.add(addToCartButton);
+        buttonPanel.add(Box.createHorizontalStrut(20)); 
         buttonPanel.add(refreshButton);
         
         return buttonPanel;
     }
     
-    /**
-     * Create status panel for displaying messages
-     */
+    
     private JPanel createStatusPanel() {
         JPanel statusPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         statusPanel.setBackground(BACKGROUND_COLOR);
@@ -322,55 +298,8 @@ public class CustomerHomePage extends JFrame {
         
         return statusPanel;
     }
+
     
-    /**
-     * Create styled button with consistent appearance
-     */
-    private JButton createStyledButton(String text, Color bgColor) {
-        JButton button = new JButton(text);
-        button.setBackground(bgColor);
-        button.setForeground(Color.WHITE);
-        button.setFocusPainted(false);
-        button.setFont(new Font("Arial", Font.BOLD, 12));
-        button.setBorder(new CompoundBorder(
-            new LineBorder(bgColor.darker(), 1),
-            new EmptyBorder(8, 12, 8, 12)
-        ));
-        
-        // Hover effect
-        button.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                button.setBackground(bgColor.brighter());
-            }
-            
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                button.setBackground(bgColor);
-            }
-        });
-        
-        return button;
-    }
-    
-    /**
-     * Create icon from resource path
-     * Returns placeholder icon if not found
-     */
-    private ImageIcon createIcon(String path, int width, int height) {
-        try {
-            ImageIcon icon = new ImageIcon(getClass().getResource(path));
-            if (icon.getIconWidth() > 0) {
-                Image img = icon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
-                return new ImageIcon(img);
-            }
-        } catch (Exception e) {
-            // Icon not found
-        }
-        return new ImageIcon();
-    }
-    
-    /**
-     * Setup action listeners for all components
-     */
     private void setupActionListeners() {
         // Logout button
         logoutButton.addActionListener(e -> {
@@ -487,9 +416,7 @@ public class CustomerHomePage extends JFrame {
         });
     }
     
-    /**
-     * Load product data from database
-     */
+    
     private void loadProductData() {
         // Clear existing data
         tableModel.setRowCount(0);
@@ -514,9 +441,7 @@ public class CustomerHomePage extends JFrame {
         updateStatus("Loaded " + products.size() + " products");
     }
     
-    /**
-     * Search for products by name
-     */
+    
     private void searchProducts() {
         String searchTerm = searchField.getText().trim();
         if (searchTerm.isEmpty()) {
@@ -549,19 +474,12 @@ public class CustomerHomePage extends JFrame {
         updateStatus("Found " + products.size() + " products matching '" + searchTerm + "'");
     }
     
-    /**
-     * Update status message
-     */
+   
     private void updateStatus(String message) {
         statusLabel.setText(message);
     }
 
-    /**
-     * Create a direct booking for the selected product
-     * @param productId The ID of the product to purchase
-     * @param quantity The quantity to purchase
-     * @return True if the booking was created successfully
-     */
+    
     private boolean createDirectBooking(int productId, int quantity) {
         try {
             // Create a booking item for the product

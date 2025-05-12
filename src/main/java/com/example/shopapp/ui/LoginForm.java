@@ -5,18 +5,13 @@ import com.example.shopapp.service.UserService;
 import com.example.shopapp.utils.UIUtils;
 
 import javax.swing.*;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
-/**
- * Login form for the Shop Application
- */
+
 public class LoginForm extends JFrame {
     private UserService userService;
     
@@ -29,11 +24,8 @@ public class LoginForm extends JFrame {
     
     // Colors - Using shared colors from UIUtils
     private final Color PRIMARY_COLOR = UIUtils.PRIMARY_COLOR;
-    private final Color SECONDARY_COLOR = UIUtils.SECONDARY_COLOR;
     private final Color ACCENT_COLOR = UIUtils.ACCENT_COLOR;
     private final Color BACKGROUND_COLOR = UIUtils.BACKGROUND_COLOR;
-    private final Color ERROR_COLOR = UIUtils.ERROR_COLOR;
-    private final Color SUCCESS_COLOR = UIUtils.SUCCESS_COLOR;
 
     /**
      * Constructor for the login form
@@ -43,12 +35,10 @@ public class LoginForm extends JFrame {
         setupUI();
     }
     
-    /**
-     * Set up the user interface
-     */
+    
     private void setupUI() {
         // Setup look and feel
-        setupLookAndFeel();
+        UIUtils.setupLookAndFeel();
         
         // Setup the JFrame
         setTitle("Shop Management - Login");
@@ -93,9 +83,7 @@ public class LoginForm extends JFrame {
         setupActionListeners();
     }
     
-    /**
-     * Create the header panel with logo and title
-     */
+   
     private JPanel createHeaderPanel() {
         JPanel headerPanel = new JPanel();
         headerPanel.setLayout(new BoxLayout(headerPanel, BoxLayout.Y_AXIS));
@@ -128,9 +116,7 @@ public class LoginForm extends JFrame {
         return headerPanel;
     }
     
-    /**
-     * Create the form panel with input fields
-     */
+    
     private JPanel createFormPanel() {
         JPanel formPanel = new JPanel();
         formPanel.setLayout(new BoxLayout(formPanel, BoxLayout.Y_AXIS));
@@ -171,9 +157,7 @@ public class LoginForm extends JFrame {
         return formPanel;
     }
     
-    /**
-     * Create the links panel with additional options
-     */
+    
     private JPanel createLinksPanel() {
         JPanel linksPanel = new JPanel();
         linksPanel.setLayout(new BoxLayout(linksPanel, BoxLayout.Y_AXIS));
@@ -203,9 +187,7 @@ public class LoginForm extends JFrame {
         return linksPanel;
     }
     
-    /**
-     * Create the status panel for displaying messages
-     */
+    
     private JPanel createStatusPanel() {
         JPanel statusPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         statusPanel.setBackground(BACKGROUND_COLOR);
@@ -217,9 +199,7 @@ public class LoginForm extends JFrame {
         return statusPanel;
     }
     
-    /**
-     * Setup action listeners for interactive components
-     */
+    
     private void setupActionListeners() {
         // Login button action
         loginButton.addActionListener(e -> performLogin());
@@ -242,9 +222,7 @@ public class LoginForm extends JFrame {
         });
     }
     
-    /**
-     * Perform the login operation
-     */
+   
     private void performLogin() {
         String username = usernameField.getText().trim();
         String password = new String(passwordField.getPassword());
@@ -286,29 +264,11 @@ public class LoginForm extends JFrame {
         }
     }
     
-    /**
-     * Display a status message
-     * @param message The message to display
-     * @param isSuccess Whether it's a success message
-     */
+    
     private void showStatus(String message, boolean isSuccess) {
         UIUtils.showStatus(statusLabel, message, isSuccess);
     }
     
-    /**
-     * Setup look and feel for the application
-     */
-    private void setupLookAndFeel() {
-        UIUtils.setupLookAndFeel();
-    }
-    
-    /**
-     * Create an icon from a resource path
-     * @param path Resource path
-     * @param width Width of the icon
-     * @param height Height of the icon
-     * @return ImageIcon object
-     */
     private ImageIcon createIcon(String path, int width, int height) {
         return UIUtils.createIcon(getClass(), path, width, height);
     }

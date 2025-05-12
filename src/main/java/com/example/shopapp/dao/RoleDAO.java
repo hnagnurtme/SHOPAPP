@@ -11,15 +11,10 @@ import java.util.List;
 import com.example.shopapp.entity.Role;
 import com.example.shopapp.utils.DatabaseConnection;
 
-/**
- * Data Access Object for Role entity
- */
+
 public class RoleDAO {
     
-    /**
-     * Get all roles from database
-     * @return List of Role objects
-     */
+    
     public List<Role> getAllRoles() {
         List<Role> roles = new ArrayList<>();
         Connection conn = null;
@@ -52,11 +47,7 @@ public class RoleDAO {
         return roles;
     }
     
-    /**
-     * Get role by ID
-     * @param roleId ID of the role
-     * @return Role object, or null if not found
-     */
+    
     public Role getById(int roleId) {
         Role role = null;
         Connection conn = null;
@@ -89,11 +80,7 @@ public class RoleDAO {
         return role;
     }
     
-    /**
-     * Save a new role to database
-     * @param role Role to save
-     * @return true if successful, false otherwise
-     */
+    
     public boolean save(Role role) {
         Connection conn = null;
         PreparedStatement pstmt = null;
@@ -129,11 +116,7 @@ public class RoleDAO {
         return success;
     }
     
-    /**
-     * Update an existing role
-     * @param role Role to update
-     * @return true if successful, false otherwise
-     */
+   
     public boolean update(Role role) {
         Connection conn = null;
         PreparedStatement pstmt = null;
@@ -159,11 +142,7 @@ public class RoleDAO {
         return success;
     }
     
-    /**
-     * Delete a role
-     * @param roleId ID of the role to delete
-     * @return true if successful, false otherwise
-     */
+    
     public boolean delete(int roleId) {
         Connection conn = null;
         PreparedStatement pstmt = null;

@@ -11,9 +11,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Service class for Booking operations
- */
+
 public class BookingService {
     private BookingDAO bookingDAO;
     private ProductDAO productDAO;
@@ -23,38 +21,22 @@ public class BookingService {
         this.productDAO = new ProductDAO();
     }
     
-    /**
-     * Get all bookings
-     * @return List of Booking objects
-     */
+    
     public List<Booking> getAllBookings() {
         return bookingDAO.getAllBookings();
     }
     
-    /**
-     * Get booking by ID
-     * @param bookingId ID of the booking
-     * @return Booking object, or null if not found
-     */
+    
     public Booking getBookingById(int bookingId) {
         return bookingDAO.getById(bookingId);
     }
     
-    /**
-     * Get bookings by user ID
-     * @param userId ID of the user
-     * @return List of Booking objects
-     */
+    
     public List<Booking> getBookingsByUserId(int userId) {
         return bookingDAO.getByUserId(userId);
     }
     
-    /**
-     * Create a new booking
-     * @param userId ID of the user making the booking
-     * @param items List of items to book (productId, quantity)
-     * @return Booking object if successful, null otherwise
-     */
+    
     public Booking createBooking(int userId, List<BookingItem> items) {
         if (items == null || items.isEmpty()) {
             System.out.println("No items in booking");
@@ -104,12 +86,7 @@ public class BookingService {
         }
     }
     
-    /**
-     * Update booking status
-     * @param bookingId ID of the booking
-     * @param status New status
-     * @return true if successful, false otherwise
-     */
+    
     public boolean updateBookingStatus(int bookingId, String status) {
         if (status == null || status.isEmpty()) {
             return false;
@@ -124,20 +101,14 @@ public class BookingService {
         return bookingDAO.updateStatus(bookingId, status);
     }
     
-    /**
-     * Check if a status is valid
-     * @param status Status to check
-     * @return true if valid, false otherwise
-     */
+    
     private boolean isValidStatus(String status) {
         return status.equals("pending") || status.equals("confirmed") || 
                status.equals("shipped") || status.equals("delivered") ||
                status.equals("cancelled");
     }
     
-    /**
-     * Inner class to represent an item in a booking
-     */
+    
     public static class BookingItem {
         private int productId;
         private int quantity;
@@ -154,5 +125,20 @@ public class BookingService {
         public int getQuantity() {
             return quantity;
         }
+    }
+    
+    public BigDecimal calculateTotalRevenue() {
+        List<Booking> bookings = getAllBookings();
+        BigDecimal totalRevenue = BigDecimal.ZERO;
+        
+        if (bookings != null) {
+            for (Booking booking : bookings) {
+                if (booking.getTotalPrice() != null) {
+                    totalRevenue = totalRevenue.add(booking.getTotalPrice());
+                }
+            }
+        }
+        
+        return totalRevenue;
     }
 }

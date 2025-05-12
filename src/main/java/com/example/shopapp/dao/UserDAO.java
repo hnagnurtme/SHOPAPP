@@ -12,9 +12,6 @@ import java.util.List;
 import com.example.shopapp.entity.User;
 import com.example.shopapp.utils.DatabaseConnection;
 
-/**
- * Data Access Object for User entity
- */
 public class UserDAO {
     
     private RoleDAO roleDAO;
@@ -23,10 +20,7 @@ public class UserDAO {
         this.roleDAO = new RoleDAO();
     }
     
-    /**
-     * Get all users from database
-     * @return List of User objects
-     */
+    
     public List<User> getAllUsers() {
         List<User> users = new ArrayList<>();
         Connection conn = null;
@@ -70,11 +64,7 @@ public class UserDAO {
         return users;
     }
     
-    /**
-     * Get user by ID
-     * @param userId ID of the user
-     * @return User object, or null if not found
-     */
+    
     public User getById(int userId) {
         User user = null;
         Connection conn = null;
@@ -117,11 +107,7 @@ public class UserDAO {
         return user;
     }
     
-    /**
-     * Get user by username
-     * @param username Username to search for
-     * @return User object, or null if not found
-     */
+    
     public User getByUsername(String username) {
         User user = null;
         Connection conn = null;
@@ -164,11 +150,7 @@ public class UserDAO {
         return user;
     }
     
-    /**
-     * Save a new user to database
-     * @param user User to save
-     * @return true if successful, false otherwise
-     */
+    
     public boolean save(User user) {
         Connection conn = null;
         PreparedStatement pstmt = null;
@@ -214,11 +196,7 @@ public class UserDAO {
         return success;
     }
     
-    /**
-     * Update an existing user
-     * @param user User to update
-     * @return true if successful, false otherwise
-     */
+    
     public boolean update(User user) {
         Connection conn = null;
         PreparedStatement pstmt = null;
@@ -253,11 +231,7 @@ public class UserDAO {
         return success;
     }
     
-    /**
-     * Delete a user
-     * @param userId ID of the user to delete
-     * @return true if successful, false otherwise
-     */
+    
     public boolean delete(int userId) {
         Connection conn = null;
         PreparedStatement pstmt = null;
@@ -282,11 +256,7 @@ public class UserDAO {
         return success;
     }
 
-    /**
-     * Get user by email
-     * @param email Email to search for
-     * @return User object, or null if not found
-     */
+    
     public User getByEmail(String email) {
         User user = null;
         Connection conn = null;

@@ -2,9 +2,6 @@ package com.example.shopapp.entity;
 
 import java.math.BigDecimal;
 
-/**
- * Entity class representing the Booking_Detail table in database
- */
 public class BookingDetail {
     private int detailId;
     private int bookingId;

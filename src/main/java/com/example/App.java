@@ -22,9 +22,7 @@ public class App {
         }
     }
     
-    /**
-     * Initialize default data in the database if needed
-     */
+    
     private static void initializeData() {
         try {
             // Initialize database with default data

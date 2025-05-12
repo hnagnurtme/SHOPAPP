@@ -13,9 +13,7 @@ import com.example.shopapp.entity.Booking;
 import com.example.shopapp.entity.BookingDetail;
 import com.example.shopapp.utils.DatabaseConnection;
 
-/**
- * Data Access Object for Booking entity
- */
+
 public class BookingDAO {
     private UserDAO userDAO;
     private ProductDAO productDAO;
@@ -25,10 +23,6 @@ public class BookingDAO {
         this.productDAO = new ProductDAO();
     }
     
-    /**
-     * Get all bookings from database
-     * @return List of Booking objects
-     */
     public List<Booking> getAllBookings() {
         List<Booking> bookings = new ArrayList<>();
         Connection conn = null;
@@ -73,11 +67,6 @@ public class BookingDAO {
         return bookings;
     }
     
-    /**
-     * Get booking by ID
-     * @param bookingId ID of the booking
-     * @return Booking object, or null if not found
-     */
     public Booking getById(int bookingId) {
         Booking booking = null;
         Connection conn = null;
@@ -121,11 +110,7 @@ public class BookingDAO {
         return booking;
     }
     
-    /**
-     * Get bookings by user ID
-     * @param userId ID of the user
-     * @return List of Booking objects
-     */
+    
     public List<Booking> getByUserId(int userId) {
         List<Booking> bookings = new ArrayList<>();
         Connection conn = null;
@@ -169,11 +154,7 @@ public class BookingDAO {
         return bookings;
     }
     
-    /**
-     * Get booking details by booking ID
-     * @param bookingId ID of the booking
-     * @return List of BookingDetail objects
-     */
+    
     public List<BookingDetail> getBookingDetailsByBookingId(int bookingId) {
         List<BookingDetail> details = new ArrayList<>();
         Connection conn = null;
@@ -216,11 +197,7 @@ public class BookingDAO {
         return details;
     }
     
-    /**
-     * Save a new booking to database with its details
-     * @param booking Booking to save (with details)
-     * @return true if successful, false otherwise
-     */
+    
     public boolean save(Booking booking) {
         Connection conn = null;
         PreparedStatement pstmt = null;
@@ -290,12 +267,7 @@ public class BookingDAO {
         return success;
     }
     
-    /**
-     * Save a booking detail to database (helper method)
-     * @param conn Active database connection
-     * @param detail BookingDetail to save
-     * @return true if successful, false otherwise
-     */
+    
     private boolean saveBookingDetail(Connection conn, BookingDetail detail) throws SQLException {
         PreparedStatement pstmt = null;
         ResultSet generatedKeys = null;
@@ -334,12 +306,7 @@ public class BookingDAO {
         return success;
     }
     
-    /**
-     * Update product quantity after booking (helper method)
-     * @param conn Active database connection
-     * @param productId ID of the product
-     * @param quantity Quantity to decrease
-     */
+    
     private void updateProductQuantity(Connection conn, int productId, int quantity) throws SQLException {
         PreparedStatement pstmt = null;
         ResultSet rs = null;
@@ -371,12 +338,7 @@ public class BookingDAO {
         }
     }
     
-    /**
-     * Update booking status
-     * @param bookingId ID of the booking
-     * @param status New status value
-     * @return true if successful, false otherwise
-     */
+    
     public boolean updateStatus(int bookingId, String status) {
         Connection conn = null;
         PreparedStatement pstmt = null;

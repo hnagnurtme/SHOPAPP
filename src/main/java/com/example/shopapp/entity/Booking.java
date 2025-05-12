@@ -5,9 +5,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.ArrayList;
 
-/**
- * Entity class representing the Booking table in database
- */
+
 public class Booking {
     private int bookingId;
     private int userId;

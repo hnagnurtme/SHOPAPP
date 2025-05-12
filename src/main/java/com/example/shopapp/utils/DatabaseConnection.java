@@ -6,9 +6,7 @@ import java.sql.SQLException;
 import java.io.IOException;
 import java.util.Properties;
 
-/**
- * Utility class for handling database connections
- */
+
 public class DatabaseConnection {
     private static final String CONFIG_FILE = "config.properties";
     private static String dbUrl;
@@ -35,19 +33,12 @@ public class DatabaseConnection {
         }
     }
     
-    /**
-     * Get a connection to the database
-     * @return Connection object
-     * @throws SQLException if connection fails
-     */
+   
     public static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(dbUrl, dbUser, dbPassword);
     }
     
-    /**
-     * Close a database connection safely
-     * @param connection The connection to close
-     */
+    
     public static void closeConnection(Connection connection) {
         if (connection != null) {
             try {

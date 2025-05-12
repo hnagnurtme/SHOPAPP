@@ -2,6 +2,7 @@ package com.example.shopapp.ui;
 
 import com.example.shopapp.entity.Product;
 import com.example.shopapp.service.ProductService;
+import com.example.shopapp.utils.UIUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,7 +15,7 @@ public class ProductEditForm extends JDialog {
     private ProductService productService;
     private Product product;
     
-    // UI Components
+    
     private JTextField nameField;
     private JTextField descField;
     private JTextField priceField;
@@ -24,22 +25,16 @@ public class ProductEditForm extends JDialog {
     private JButton saveButton;
     private JButton cancelButton;
 
-    /**
-     * Constructor cho ProductEditForm
-     * @param parent Component cha
-     * @param productService Service xử lý sản phẩm
-     * @param product Sản phẩm cần chỉnh sửa
-     */
+    
     public ProductEditForm(JFrame parent, ProductService productService, Product product) {
         super(parent, "Sửa Sản Phẩm", true);
         this.productService = productService;
         this.product = product;
         initializeUI();
+        UIUtils.setupLookAndFeel();
     }
 
-    /**
-     * Khởi tạo giao diện người dùng
-     */
+   
     private void initializeUI() {
         setSize(400, 350);
         setLayout(new BorderLayout());
@@ -87,9 +82,7 @@ public class ProductEditForm extends JDialog {
         add(buttonPanel, BorderLayout.SOUTH);
     }
 
-    /**
-     * Lưu thông tin sản phẩm đã chỉnh sửa
-     */
+    
     private void saveProduct() {
         try {
             // Cập nhật thông tin sản phẩm

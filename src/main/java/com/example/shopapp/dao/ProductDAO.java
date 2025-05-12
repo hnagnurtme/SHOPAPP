@@ -13,15 +13,10 @@ import java.util.List;
 import com.example.shopapp.entity.Product;
 import com.example.shopapp.utils.DatabaseConnection;
 
-/**
- * Data Access Object for Product entity
- */
+
 public class ProductDAO {
     
-    /**
-     * Get all products from database
-     * @return List of Product objects
-     */
+   
     public List<Product> getAllProducts() {
         List<Product> products = new ArrayList<>();
         Connection conn = null;
@@ -60,11 +55,7 @@ public class ProductDAO {
         return products;
     }
     
-    /**
-     * Get product by ID
-     * @param productId ID of the product
-     * @return Product object, or null if not found
-     */
+   
     public Product getById(int productId) {
         Product product = null;
         Connection conn = null;
@@ -103,11 +94,7 @@ public class ProductDAO {
         return product;
     }
     
-    /**
-     * Search products by name or description
-     * @param keyword Keyword to search for
-     * @return List of matching products
-     */
+    
     public List<Product> searchProducts(String keyword) {
         List<Product> products = new ArrayList<>();
         Connection conn = null;
@@ -150,11 +137,7 @@ public class ProductDAO {
         return products;
     }
     
-    /**
-     * Save a new product to database
-     * @param product Product to save
-     * @return true if successful, false otherwise
-     */
+    
     public boolean save(Product product) {
         Connection conn = null;
         PreparedStatement pstmt = null;
@@ -198,11 +181,7 @@ public class ProductDAO {
         return success;
     }
     
-    /**
-     * Update an existing product
-     * @param product Product to update
-     * @return true if successful, false otherwise
-     */
+    
     public boolean update(Product product) {
         Connection conn = null;
         PreparedStatement pstmt = null;
@@ -235,12 +214,7 @@ public class ProductDAO {
         return success;
     }
     
-    /**
-     * Update product quantity
-     * @param productId ID of the product
-     * @param quantity New quantity value
-     * @return true if successful, false otherwise
-     */
+    
     public boolean updateQuantity(int productId, int quantity) {
         Connection conn = null;
         PreparedStatement pstmt = null;
@@ -266,11 +240,7 @@ public class ProductDAO {
         return success;
     }
     
-    /**
-     * Delete a product
-     * @param productId ID of the product to delete
-     * @return true if successful, false otherwise
-     */
+    
     public boolean delete(int productId) {
         Connection conn = null;
         PreparedStatement pstmt = null;
@@ -295,11 +265,7 @@ public class ProductDAO {
         return success;
     }
     
-    /**
-     * Search products by name
-     * @param name The name to search for
-     * @return List of matching products
-     */
+    
     public List<Product> searchProductsByName(String name) {
         List<Product> products = new ArrayList<>();
         Connection conn = null;

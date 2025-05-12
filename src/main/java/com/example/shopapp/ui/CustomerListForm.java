@@ -2,6 +2,7 @@ package com.example.shopapp.ui;
 
 import com.example.shopapp.entity.User;
 import com.example.shopapp.service.UserService;
+import com.example.shopapp.utils.UIUtils;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -9,30 +10,22 @@ import java.awt.*;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-/**
- * Form hiển thị danh sách khách hàng
- */
+
 public class CustomerListForm extends JDialog {
     private UserService userService;
     private JTable customerTable;
     private DefaultTableModel customerModel;
 
-    /**
-     * Constructor cho CustomerListForm
-     * @param parent Component cha
-     * @param userService Service xử lý người dùng
-     */
+   
     public CustomerListForm(JFrame parent, UserService userService) {
         super(parent, "Danh Sách Khách Hàng", true);
         this.userService = userService;
         initializeUI();
+        UIUtils.setupLookAndFeel();
         loadCustomerData();
     }
     
-    /**
-     * Constructor cho CustomerListForm
-     * @param parent Component cha
-     */
+    
     public CustomerListForm(JFrame parent) {
         super(parent, "Danh Sách Khách Hàng", true);
         this.userService = new UserService();
@@ -40,9 +33,7 @@ public class CustomerListForm extends JDialog {
         loadCustomerData();
     }
 
-    /**
-     * Khởi tạo giao diện người dùng
-     */
+    
     private void initializeUI() {
         setSize(700, 500);
         setLayout(new BorderLayout());
@@ -70,9 +61,7 @@ public class CustomerListForm extends JDialog {
         add(buttonPanel, BorderLayout.SOUTH);
     }
 
-    /**
-     * Tải dữ liệu khách hàng vào bảng
-     */
+    
     private void loadCustomerData() {
         // Xóa dữ liệu hiện có
         customerModel.setRowCount(0);

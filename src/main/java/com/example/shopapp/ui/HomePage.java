@@ -4,6 +4,7 @@ import com.example.shopapp.entity.Product;
 import com.example.shopapp.entity.User;
 import com.example.shopapp.service.ProductService;
 import com.example.shopapp.service.UserService;
+import com.example.shopapp.utils.UIUtils;
 import com.example.shopapp.service.BookingService;
 
 import javax.swing.*;
@@ -16,17 +17,14 @@ import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.math.BigDecimal;
 import java.util.List;
 
-/**
- * HomePage class implements the main user interface using JFrame
- */
 public class HomePage extends JFrame {
     private ProductService productService;
     private UserService userService;
     private BookingService bookingService;
     
-    // Current logged in user
     private User currentUser;
     
     // UI Components
@@ -45,77 +43,42 @@ public class HomePage extends JFrame {
     private JLabel userInfoLabel;
     private JButton logoutButton;
     
-    // Colors
     private final Color PRIMARY_COLOR = new Color(25, 118, 210);
     private final Color SECONDARY_COLOR = new Color(66, 165, 245);
-    private final Color ACCENT_COLOR = new Color(255, 111, 0);
     private final Color BACKGROUND_COLOR = new Color(245, 245, 245);
     private final Color TABLE_HEADER_BG = new Color(25, 118, 210);
     private final Color TABLE_HEADER_FG = Color.WHITE;
     private final Color TABLE_ALTERNATE_ROW = new Color(240, 248, 255);
     
-    /**
-     * Constructor cho HomePage with user
-     */
+    
     public HomePage(User user) {
         this.currentUser = user;
         productService = new ProductService();
         userService = new UserService();
         bookingService = new BookingService();
-        setupLookAndFeel();
+        UIUtils.setupLookAndFeel();
         initializeUI();
         loadProductData();
     }
     
-    /**
-     * Constructor cho HomePage - for backward compatibility
-     */
+    
     public HomePage() {
         productService = new ProductService();
         userService = new UserService();
         bookingService = new BookingService();
-        setupLookAndFeel();
+        UIUtils.setupLookAndFeel();
         initializeUI();
         loadProductData();
     }
     
-    /**
-     * Thiết lập look and feel cho ứng dụng
-     */
-    private void setupLookAndFeel() {
-        try {
-            for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (Exception e) {
-            try {
-                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        }
-        
-        // Set colors for Nimbus
-        UIManager.put("control", BACKGROUND_COLOR);
-        UIManager.put("nimbusBase", PRIMARY_COLOR);
-        UIManager.put("nimbusFocus", ACCENT_COLOR);
-        UIManager.put("nimbusLinkVisited", new Color(102, 14, 122));
-        UIManager.put("nimbusBlueGrey", new Color(169, 176, 190));
-    }
     
-    /**
-     * Khởi tạo giao diện người dùng
-     */
+    
     private void initializeUI() {
-        // Thiết lập thuộc tính cho frame
         setTitle("Shop Management System");
-        setSize(1000, 700);
+        setSize(1200, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-        setIconImage(createIcon("/icons/shop.png", 16, 16).getImage());
+        setIconImage(UIUtils.createIcon(getClass(), getName(), 32, 32).getImage());
         
         // Set background color
         getContentPane().setBackground(BACKGROUND_COLOR);
@@ -157,9 +120,7 @@ public class HomePage extends JFrame {
         setupActionListeners();
     }
     
-    /**
-     * Tạo header panel với tiêu đề ứng dụng
-     */
+    
     private JPanel createHeaderPanel() {
         JPanel headerPanel = new JPanel(new BorderLayout());
         headerPanel.setBackground(PRIMARY_COLOR);
@@ -182,6 +143,10 @@ public class HomePage extends JFrame {
         
         headerPanel.add(labelPanel, BorderLayout.WEST);
         
+        // Center - Statistics
+        JPanel statsPanel = createStatisticsPanel();
+        headerPanel.add(statsPanel, BorderLayout.CENTER);
+        
         // Right side - User info and logout button
         JPanel userPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         userPanel.setBackground(PRIMARY_COLOR);
@@ -199,7 +164,7 @@ public class HomePage extends JFrame {
         userInfoLabel = new JLabel(isAdmin ? "Admin: " + username : "User: " + username);
         userInfoLabel.setFont(new Font("Arial", Font.BOLD, 14));
         userInfoLabel.setForeground(Color.WHITE);
-        userInfoLabel.setIcon(createIcon("/icons/user.png", 16, 16));
+        userInfoLabel.setIcon(UIUtils.createIcon(getClass(), username, WIDTH, HEIGHT));
         
         // Logout button
         logoutButton = new JButton("Logout");
@@ -223,15 +188,12 @@ public class HomePage extends JFrame {
         return headerPanel;
     }
     
-    /**
-     * Tạo panel tìm kiếm và điều hướng
-     */
+    
     private JPanel createTopPanel() {
         JPanel topPanel = new JPanel(new BorderLayout(10, 10));
         topPanel.setBackground(BACKGROUND_COLOR);
         topPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
         
-        // Tạo panel tìm kiếm
         JPanel searchPanel = new JPanel(new BorderLayout(5, 0));
         searchPanel.setBackground(BACKGROUND_COLOR);
         
@@ -245,8 +207,7 @@ public class HomePage extends JFrame {
             new EmptyBorder(5, 5, 5, 5)
         ));
         
-        searchButton = createStyledButton("Search", ACCENT_COLOR);
-        searchButton.setIcon(createIcon("/icons/search.png", 16, 16));
+        searchButton = UIUtils.createStyledButton("Search", SECONDARY_COLOR);
         
         JPanel searchInputPanel = new JPanel(new BorderLayout(5, 0));
         searchInputPanel.setBackground(BACKGROUND_COLOR);
@@ -256,15 +217,13 @@ public class HomePage extends JFrame {
         
         searchPanel.add(searchInputPanel, BorderLayout.CENTER);
         
-        // Tạo panel điều hướng ở phía trên bên phải
+
         JPanel navPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         navPanel.setBackground(BACKGROUND_COLOR);
         
-        customersButton = createStyledButton("Customers", PRIMARY_COLOR);
-        customersButton.setIcon(createIcon("/icons/customers.png", 16, 16));
+        customersButton = UIUtils.createStyledButton("Customers", PRIMARY_COLOR);
+        bookingsButton = UIUtils.createStyledButton("Orders", PRIMARY_COLOR);
         
-        bookingsButton = createStyledButton("Orders", PRIMARY_COLOR);
-        bookingsButton.setIcon(createIcon("/icons/bookings.png", 16, 16));
         
         navPanel.add(customersButton);
         navPanel.add(bookingsButton);
@@ -276,9 +235,7 @@ public class HomePage extends JFrame {
         return topPanel;
     }
     
-    /**
-     * Tạo bảng hiển thị sản phẩm
-     */
+    
     private JScrollPane createProductTable() {
         String[] columns = {"ID", "Product Name", "Description", "Price", "Size", "Color", "Quantity"};
         tableModel = new DefaultTableModel(columns, 0) {
@@ -349,26 +306,17 @@ public class HomePage extends JFrame {
         return scrollPane;
     }
     
-    /**
-     * Tạo panel chứa các nút thao tác
-     */
+    
     private JPanel createButtonPanel() {
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 0));
         buttonPanel.setBackground(BACKGROUND_COLOR);
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(15, 0, 0, 0));
         
-        addButton = createStyledButton("Add Product", SECONDARY_COLOR);
-        addButton.setIcon(createIcon("/icons/add.png", 16, 16));
-        
-        editButton = createStyledButton("Edit Product", SECONDARY_COLOR);
-        editButton.setIcon(createIcon("/icons/edit.png", 16, 16));
-        
-        deleteButton = createStyledButton("Delete Product", SECONDARY_COLOR);
-        deleteButton.setIcon(createIcon("/icons/delete.png", 16, 16));
-        
-        refreshButton = createStyledButton("Refresh", SECONDARY_COLOR);
-        refreshButton.setIcon(createIcon("/icons/refresh.png", 16, 16));
-        
+        addButton = UIUtils.createStyledButton("Add Product", SECONDARY_COLOR);
+        editButton = UIUtils.createStyledButton("Edit Product", SECONDARY_COLOR);
+        deleteButton = UIUtils.createStyledButton("Delete Product", SECONDARY_COLOR);
+        refreshButton = UIUtils.createStyledButton("Refresh", SECONDARY_COLOR);
+       
         buttonPanel.add(addButton);
         buttonPanel.add(editButton);
         buttonPanel.add(deleteButton);
@@ -377,9 +325,7 @@ public class HomePage extends JFrame {
         return buttonPanel;
     }
     
-    /**
-     * Tạo status bar ở dưới cùng của ứng dụng
-     */
+   
     private JPanel createStatusPanel() {
         JPanel statusPanel = new JPanel(new BorderLayout());
         statusPanel.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
@@ -400,53 +346,7 @@ public class HomePage extends JFrame {
         return statusPanel;
     }
     
-    /**
-     * Tạo nút với style nhất quán
-     */
-    private JButton createStyledButton(String text, Color bgColor) {
-        JButton button = new JButton(text);
-        button.setBackground(bgColor);
-        button.setForeground(Color.WHITE);
-        button.setFocusPainted(false);
-        button.setFont(new Font("Arial", Font.BOLD, 12));
-        button.setBorder(new CompoundBorder(
-            new LineBorder(bgColor.darker(), 1),
-            new EmptyBorder(8, 12, 8, 12)
-        ));
-        
-        // Hiệu ứng hover
-        button.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                button.setBackground(bgColor.brighter());
-            }
-            
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                button.setBackground(bgColor);
-            }
-        });
-        
-        return button;
-    }
-    
-    /**
-     * Tạo icon từ path
-     * Trả về placeholder icon nếu không tìm thấy
-     */
-    private ImageIcon createIcon(String path, int width, int height) {
-        try {
-            ImageIcon icon = new ImageIcon(getClass().getResource(path));
-            if (icon.getIconWidth() > 0) {
-                Image img = icon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
-                return new ImageIcon(img);
-            }
-        } catch (Exception e) {
-        }
-        return new ImageIcon();
-    }
-    
-    /**
-     * Thiết lập các action listener cho các component
-     */
+   
     private void setupActionListeners() {
         // Add product button
         addButton.addActionListener(e -> {
@@ -526,9 +426,7 @@ public class HomePage extends JFrame {
         });
     }
     
-    /**
-     * Tải dữ liệu sản phẩm vào bảng
-     */
+    
     private void loadProductData() {
         // Xóa dữ liệu hiện có
         tableModel.setRowCount(0);
@@ -553,9 +451,6 @@ public class HomePage extends JFrame {
         updateStatus("Loaded " + products.size() + " products");
     }
     
-    /**
-     * Xóa sản phẩm đã chọn
-     */
     private void deleteProduct() {
         int selectedRow = productTable.getSelectedRow();
         if (selectedRow == -1) {
@@ -591,9 +486,7 @@ public class HomePage extends JFrame {
         }
     }
     
-    /**
-     * Tìm kiếm sản phẩm theo tên
-     */
+    
     private void searchProducts() {
         String searchTerm = searchField.getText().trim();
         
@@ -627,16 +520,12 @@ public class HomePage extends JFrame {
         updateStatus("Found " + products.size() + " matching products");
     }
     
-    /**
-     * Cập nhật trạng thái hiển thị ở status bar
-     */
+    
     private void updateStatus(String message) {
         statusLabel.setText(message);
     }
     
-    /**
-     * Logout the current user and return to login screen
-     */
+    
     private void logout() {
         int choice = JOptionPane.showConfirmDialog(this, 
             "Are you sure you want to log out?", 
@@ -655,15 +544,63 @@ public class HomePage extends JFrame {
         }
     }
     
-    /**
-     * Phương thức chính để khởi động ứng dụng
-     */
-    public static void main(String[] args) {
-        // Khởi chạy ứng dụng với SwingUtilities
-        SwingUtilities.invokeLater(() -> {
-            // Show the login form instead of directly showing HomePage
-            LoginForm loginForm = new LoginForm();
-            loginForm.setVisible(true);
-        });
+    private JPanel createStatisticsPanel() {
+        JPanel statsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 30, 0));
+        statsPanel.setBackground(PRIMARY_COLOR);
+        
+        // Get statistics
+        int totalCustomers = userService.countUsers();
+        int totalProducts = productService.countProducts();
+        BigDecimal totalRevenue = bookingService.calculateTotalRevenue();
+        
+        // Format the revenue with two decimal places
+        String formattedRevenue = String.format("%,.2f", totalRevenue);
+        
+        // Create stat boxes with icons (using text since emoji support varies)
+        JPanel customersBox = createStatBox("Total Customers", String.valueOf(totalCustomers));
+        JPanel productsBox = createStatBox("Total Products", String.valueOf(totalProducts));
+        JPanel revenueBox = createStatBox("Total Revenue", "$" + formattedRevenue);
+        
+        // Add to panel
+        statsPanel.add(customersBox);
+        statsPanel.add(productsBox);
+        statsPanel.add(revenueBox);
+        
+        return statsPanel;
+    }
+    
+    private JPanel createStatBox(String title, String value) {
+        JPanel boxPanel = new JPanel(new BorderLayout(5, 0));
+        boxPanel.setBackground(new Color(255, 255, 255, 40)); 
+        boxPanel.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(255, 255, 255, 80), 1),
+            BorderFactory.createEmptyBorder(8, 12, 8, 12)
+        ));
+        
+        // Icon and value
+        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 0));
+        topPanel.setOpaque(false);
+        
+        JLabel iconLabel = new JLabel(""); 
+        iconLabel.setFont(new Font("Arial", Font.PLAIN, 18));
+        iconLabel.setForeground(Color.WHITE);
+        
+        JLabel valueLabel = new JLabel(value);
+        valueLabel.setFont(new Font("Arial", Font.BOLD, 18));
+        valueLabel.setForeground(Color.WHITE);
+        
+        topPanel.add(iconLabel);
+        topPanel.add(valueLabel);
+        
+
+        JLabel titleLabel = new JLabel(title);
+        titleLabel.setFont(new Font("Arial", Font.PLAIN, 12));
+        titleLabel.setForeground(new Color(220, 220, 220));
+        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        
+        boxPanel.add(topPanel, BorderLayout.CENTER);
+        boxPanel.add(titleLabel, BorderLayout.SOUTH);
+        
+        return boxPanel;
     }
 }

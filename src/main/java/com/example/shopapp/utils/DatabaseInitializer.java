@@ -13,9 +13,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-/**
- * Helper class for initializing database with default data
- */
+
 public class DatabaseInitializer {
     
     private RoleService roleService;
@@ -28,18 +26,14 @@ public class DatabaseInitializer {
         productService = new ProductService();
     }
     
-    /**
-     * Initialize database with default data if needed
-     */
+    
     public void initialize() {
         initializeRoles();
         initializeAdminUser();
         initializeSampleProducts();
     }
     
-    /**
-     * Create default roles if they don't exist
-     */
+   
     private void initializeRoles() {
         if (isTableEmpty("Role")) {
             System.out.println("Initializing roles...");
@@ -58,9 +52,7 @@ public class DatabaseInitializer {
         }
     }
     
-    /**
-     * Create an admin user if no users exist
-     */
+   
     private void initializeAdminUser() {
         if (isTableEmpty("User")) {
             System.out.println("Creating admin user...");
@@ -83,9 +75,7 @@ public class DatabaseInitializer {
         }
     }
     
-    /**
-     * Initialize sample products if no products exist
-     */
+    
     private void initializeSampleProducts() {
         if (isTableEmpty("Product")) {
             System.out.println("Adding sample products...");
@@ -113,9 +103,7 @@ public class DatabaseInitializer {
         }
     }
     
-    /**
-     * Add a sample product
-     */
+    
     private void addSampleProduct(String name, String description, BigDecimal price, 
                                 String size, String color, int quantity) {
         Product product = productService.createProduct(name, description, price, size, color, quantity);
@@ -124,11 +112,7 @@ public class DatabaseInitializer {
         }
     }
     
-    /**
-     * Check if a table is empty
-     * @param tableName Name of the table to check
-     * @return true if table is empty, false otherwise
-     */
+    
     private boolean isTableEmpty(String tableName) {
         Connection conn = null;
         PreparedStatement pstmt = null;

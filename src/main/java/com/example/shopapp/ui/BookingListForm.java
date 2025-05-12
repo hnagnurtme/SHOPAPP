@@ -11,9 +11,7 @@ import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-/**
- * Form hiển thị danh sách đơn hàng
- */
+
 public class BookingListForm extends JDialog {
     private BookingService bookingService;
     private JTable bookingTable;
@@ -21,11 +19,7 @@ public class BookingListForm extends JDialog {
     private JTable detailTable;
     private DefaultTableModel detailModel;
 
-    /**
-     * Constructor cho BookingListForm
-     * @param parent Component cha
-     * @param bookingService Service xử lý đơn hàng
-     */
+    
     public BookingListForm(JFrame parent, BookingService bookingService) {
         super(parent, "Danh Sách Đơn Hàng", true);
         this.bookingService = bookingService;
@@ -33,10 +27,6 @@ public class BookingListForm extends JDialog {
         loadBookingData();
     }
     
-    /**
-     * Constructor cho BookingListForm
-     * @param parent Component cha
-     */
     public BookingListForm(JFrame parent) {
         super(parent, "Danh Sách Đơn Hàng", true);
         this.bookingService = new BookingService();
@@ -44,9 +34,6 @@ public class BookingListForm extends JDialog {
         loadBookingData();
     }
 
-    /**
-     * Khởi tạo giao diện người dùng
-     */
     private void initializeUI() {
         setSize(800, 500);
         setLayout(new BorderLayout());
@@ -102,9 +89,7 @@ public class BookingListForm extends JDialog {
         add(buttonPanel, BorderLayout.SOUTH);
     }
 
-    /**
-     * Tải dữ liệu đơn hàng vào bảng
-     */
+    
     private void loadBookingData() {
         // Xóa dữ liệu hiện có
         bookingModel.setRowCount(0);
@@ -130,10 +115,7 @@ public class BookingListForm extends JDialog {
         }
     }
 
-    /**
-     * Hiển thị chi tiết đơn hàng
-     * @param bookingId ID của đơn hàng cần hiển thị chi tiết
-     */
+    
     private void displayBookingDetails(int bookingId) {
         // Xóa dữ liệu chi tiết hiện có
         detailModel.setRowCount(0);

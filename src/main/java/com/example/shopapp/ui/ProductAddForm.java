@@ -2,18 +2,16 @@ package com.example.shopapp.ui;
 
 import com.example.shopapp.entity.Product;
 import com.example.shopapp.service.ProductService;
+import com.example.shopapp.utils.UIUtils;
 
 import javax.swing.*;
 import java.awt.*;
 import java.math.BigDecimal;
 
-/**
- * Form thêm sản phẩm mới
- */
+
 public class ProductAddForm extends JDialog {
     private ProductService productService;
     
-    // UI Components
     private JTextField nameField;
     private JTextField descField;
     private JTextField priceField;
@@ -23,20 +21,15 @@ public class ProductAddForm extends JDialog {
     private JButton saveButton;
     private JButton cancelButton;
 
-    /**
-     * Constructor cho ProductAddForm
-     * @param parent Component cha
-     * @param productService Service xử lý sản phẩm
-     */
+    
     public ProductAddForm(JFrame parent, ProductService productService) {
         super(parent, "Thêm Sản Phẩm Mới", true);
         this.productService = productService;
         initializeUI();
+        UIUtils.setupLookAndFeel();
     }
 
-    /**
-     * Khởi tạo giao diện người dùng
-     */
+    
     private void initializeUI() {
         setSize(400, 350);
         setLayout(new BorderLayout());
@@ -84,9 +77,7 @@ public class ProductAddForm extends JDialog {
         add(buttonPanel, BorderLayout.SOUTH);
     }
 
-    /**
-     * Lưu sản phẩm mới
-     */
+    
     private void saveProduct() {
         try {
             // Tạo sản phẩm mới

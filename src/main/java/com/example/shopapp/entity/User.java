@@ -2,9 +2,7 @@ package com.example.shopapp.entity;
 
 import java.time.LocalDateTime;
 
-/**
- * Entity class representing the User table in database
- */
+
 public class User {
     private int userId;
     private String username;

@@ -3,9 +3,6 @@ package com.example.shopapp.entity;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-/**
- * Entity class representing the Product table in database
- */
 public class Product {
     private int productId;
     private String productName;

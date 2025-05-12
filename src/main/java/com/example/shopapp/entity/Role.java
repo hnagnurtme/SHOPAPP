@@ -1,8 +1,6 @@
 package com.example.shopapp.entity;
 
-/**
- * Entity class representing the Role table in database
- */
+
 public class Role {
     private int roleId;
     private String roleName;

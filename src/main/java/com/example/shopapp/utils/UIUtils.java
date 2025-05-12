@@ -3,9 +3,7 @@ package com.example.shopapp.utils;
 import javax.swing.*;
 import java.awt.*;
 
-/**
- * Utility class for UI components and operations
- */
+
 public class UIUtils {
     // Common UI colors
     public static final Color PRIMARY_COLOR = new Color(25, 118, 210);
@@ -18,9 +16,6 @@ public class UIUtils {
     public static final Color TABLE_HEADER_FG = Color.WHITE;
     public static final Color TABLE_ALTERNATE_ROW = new Color(240, 248, 255);
     
-    /**
-     * Setup look and feel for the application
-     */
     public static void setupLookAndFeel() {
         try {
             for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
@@ -45,14 +40,6 @@ public class UIUtils {
         UIManager.put("nimbusBlueGrey", new Color(169, 176, 190));
     }
     
-    /**
-     * Create an icon from a resource path
-     * @param clazz Class to use for resource loading
-     * @param path Resource path
-     * @param width Width of the icon
-     * @param height Height of the icon
-     * @return ImageIcon object
-     */
     public static ImageIcon createIcon(Class<?> clazz, String path, int width, int height) {
         try {
             ImageIcon icon = new ImageIcon(clazz.getResource(path));
@@ -66,12 +53,7 @@ public class UIUtils {
         return new ImageIcon();
     }
     
-    /**
-     * Creates a styled button with consistent appearance
-     * @param text Button text
-     * @param bgColor Background color
-     * @return Styled JButton
-     */
+    
     public static JButton createStyledButton(String text, Color bgColor) {
         JButton button = new JButton(text);
         button.setBackground(bgColor);
@@ -97,10 +79,7 @@ public class UIUtils {
         return button;
     }
     
-    /**
-     * Creates a styled text field with consistent appearance
-     * @return Styled JTextField
-     */
+    
     public static JTextField createStyledTextField() {
         JTextField field = new JTextField();
         field.setFont(new Font("Arial", Font.PLAIN, 14));
@@ -112,10 +91,7 @@ public class UIUtils {
         return field;
     }
     
-    /**
-     * Creates a styled password field with consistent appearance
-     * @return Styled JPasswordField
-     */
+    
     public static JPasswordField createStyledPasswordField() {
         JPasswordField field = new JPasswordField();
         field.setFont(new Font("Arial", Font.PLAIN, 14));
@@ -127,24 +103,14 @@ public class UIUtils {
         return field;
     }
     
-    /**
-     * Creates a styled label with consistent appearance
-     * @param text Label text
-     * @param isBold Whether the label should be bold
-     * @return Styled JLabel
-     */
+    
     public static JLabel createStyledLabel(String text, boolean isBold) {
         JLabel label = new JLabel(text);
         label.setFont(new Font("Arial", isBold ? Font.BOLD : Font.PLAIN, 14));
         return label;
     }
     
-    /**
-     * Sets a status message on a label
-     * @param label The label to update
-     * @param message The message to display
-     * @param isSuccess Whether it's a success message
-     */
+    
     public static void showStatus(JLabel label, String message, boolean isSuccess) {
         label.setText(message);
         label.setForeground(isSuccess ? SUCCESS_COLOR : ERROR_COLOR);

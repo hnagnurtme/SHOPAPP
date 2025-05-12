@@ -5,17 +5,13 @@ import com.example.shopapp.service.UserService;
 import com.example.shopapp.utils.UIUtils;
 
 import javax.swing.*;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
-/**
- * Signup form for the Shop Application
- */
+
 public class SignupForm extends JFrame {
     private UserService userService;
     
@@ -31,34 +27,25 @@ public class SignupForm extends JFrame {
     
     // Colors - Using shared colors from UIUtils
     private final Color PRIMARY_COLOR = UIUtils.PRIMARY_COLOR;
-    private final Color SECONDARY_COLOR = UIUtils.SECONDARY_COLOR;
     private final Color ACCENT_COLOR = UIUtils.ACCENT_COLOR;
     private final Color BACKGROUND_COLOR = UIUtils.BACKGROUND_COLOR;
-    private final Color ERROR_COLOR = UIUtils.ERROR_COLOR;
-    private final Color SUCCESS_COLOR = UIUtils.SUCCESS_COLOR;
 
-    /**
-     * Constructor for the signup form
-     */
+    
     public SignupForm() {
         userService = new UserService();
         setupUI();
     }
     
-    /**
-     * Set up the user interface
-     */
+   
     private void setupUI() {
-        // Setup look and feel
-        setupLookAndFeel();
-        
-        // Setup the JFrame
+       
+        UIUtils.setupLookAndFeel();
+    
         setTitle("Shop Management - Sign Up");
         setSize(450, 620);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(false);
-        setIconImage(createIcon("/icons/shop.png", 16, 16).getImage());
         
         // Main panel with padding
         JPanel mainPanel = new JPanel();
@@ -95,18 +82,14 @@ public class SignupForm extends JFrame {
         setupActionListeners();
     }
     
-    /**
-     * Create the header panel with logo and title
-     */
+   
     private JPanel createHeaderPanel() {
         JPanel headerPanel = new JPanel();
         headerPanel.setLayout(new BoxLayout(headerPanel, BoxLayout.Y_AXIS));
         headerPanel.setBackground(BACKGROUND_COLOR);
         headerPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
         
-        // Add Logo
         JLabel logoLabel = new JLabel();
-        logoLabel.setIcon(createIcon("/icons/shop.png", 60, 60));
         logoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         
         // Add Title
@@ -130,9 +113,7 @@ public class SignupForm extends JFrame {
         return headerPanel;
     }
     
-    /**
-     * Create the form panel with input fields
-     */
+    
     private JPanel createFormPanel() {
         JPanel formPanel = new JPanel();
         formPanel.setLayout(new BoxLayout(formPanel, BoxLayout.Y_AXIS));
@@ -211,9 +192,7 @@ public class SignupForm extends JFrame {
         return formPanel;
     }
     
-    /**
-     * Create the links panel with additional options
-     */
+    
     private JPanel createLinksPanel() {
         JPanel linksPanel = new JPanel();
         linksPanel.setLayout(new BoxLayout(linksPanel, BoxLayout.Y_AXIS));
@@ -243,9 +222,7 @@ public class SignupForm extends JFrame {
         return linksPanel;
     }
     
-    /**
-     * Create the status panel for displaying messages
-     */
+   
     private JPanel createStatusPanel() {
         JPanel statusPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         statusPanel.setBackground(BACKGROUND_COLOR);
@@ -257,9 +234,7 @@ public class SignupForm extends JFrame {
         return statusPanel;
     }
     
-    /**
-     * Setup action listeners for interactive components
-     */
+   
     private void setupActionListeners() {
         // Signup button action
         signupButton.addActionListener(e -> performSignup());
@@ -272,9 +247,7 @@ public class SignupForm extends JFrame {
         });
     }
     
-    /**
-     * Perform the signup operation
-     */
+   
     private void performSignup() {
         String username = usernameField.getText().trim();
         String email = emailField.getText().trim();
@@ -285,22 +258,22 @@ public class SignupForm extends JFrame {
         // Validate inputs
         if (username.isEmpty() || email.isEmpty() || fullName.isEmpty() || 
             password.isEmpty() || confirmPassword.isEmpty()) {
-            showStatus("All fields marked with * are required", false);
+            UIUtils.showStatus(statusLabel, "All fields marked with * are required", false);
             return;
         }
         
         if (!isValidEmail(email)) {
-            showStatus("Please enter a valid email address", false);
+            UIUtils.showStatus(statusLabel, "Invalid email format", false);
             return;
         }
         
         if (!password.equals(confirmPassword)) {
-            showStatus("Passwords do not match", false);
+            UIUtils.showStatus(statusLabel, "Passwords do not match", false);
             return;
         }
         
         if (password.length() < 6) {
-            showStatus("Password must be at least 6 characters", false);
+            UIUtils.showStatus(statusLabel, "Password must be at least 6 characters long", false);
             return;
         }
         
@@ -311,7 +284,7 @@ public class SignupForm extends JFrame {
         User user = userService.registerUser(username, password, email, fullName, roleId);
         
         if (user != null) {
-            showStatus("Registration successful!", true);
+            UIUtils.showStatus(statusLabel, "Registration successful! Redirecting to login...", true);
             
             // Short delay before opening the login page
             Timer timer = new Timer(1000, new ActionListener() {
@@ -326,13 +299,11 @@ public class SignupForm extends JFrame {
             timer.setRepeats(false);
             timer.start();
         } else {
-            showStatus("Username already exists or registration failed", false);
+            UIUtils.showStatus(statusLabel, "Username already exists or registration failed", false);
         }
     }
     
-    /**
-     * Validate an email address using regex
-     */
+    
     private boolean isValidEmail(String email) {
         // Simple email validation pattern
         String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@" +
@@ -341,30 +312,8 @@ public class SignupForm extends JFrame {
         return pattern.matcher(email).matches();
     }
     
-    /**
-     * Display a status message
-     * @param message The message to display
-     * @param isSuccess Whether it's a success message
-     */
-    private void showStatus(String message, boolean isSuccess) {
-        UIUtils.showStatus(statusLabel, message, isSuccess);
-    }
     
-    /**
-     * Setup look and feel for the application
-     */
-    private void setupLookAndFeel() {
-        UIUtils.setupLookAndFeel();
-    }
     
-    /**
-     * Create an icon from a resource path
-     * @param path Resource path
-     * @param width Width of the icon
-     * @param height Height of the icon
-     * @return ImageIcon object
-     */
-    private ImageIcon createIcon(String path, int width, int height) {
-        return UIUtils.createIcon(getClass(), path, width, height);
-    }
+    
+   
 }
